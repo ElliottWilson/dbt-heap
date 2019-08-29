@@ -37,13 +37,7 @@ with sessions as (
         
         session_id,
         max(event_time) over (partition by session_id) as session_end_time,
-        count(*) over (partition by session_id) as event_count,
-        
-        first_value(query) over (
-            partition by session_id 
-            order by event_time 
-            rows between unbounded preceding and unbounded following
-            ) as first_page_query
+        count(*) over (partition by session_id) as event_count
             
     from events
 
@@ -68,8 +62,7 @@ with sessions as (
       ea.event_count,
       referrers.medium as referrer_medium,
       referrers.source as referrer_source,
-      coalesce(users.user_identity, s.user_id::varchar) as blended_user_id,
-      {{ dbt_utils.get_url_parameter('ea.first_page_query', 'gclid') }} as gclid
+      coalesce(users.user_identity, s.user_id::varchar) as blended_user_id
       
     from referring_domains s
       left outer join events_agg ea on s.session_id = ea.session_id

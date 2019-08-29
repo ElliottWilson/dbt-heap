@@ -6,8 +6,10 @@ models:
     columns:
         - name: event_id
           tests:
-              - unique
               - not_null
+    tests:
+        - unique:
+            column_name: "concat(event_id, session_id, event_table_name)"
               
   - name: heap_sessions
     

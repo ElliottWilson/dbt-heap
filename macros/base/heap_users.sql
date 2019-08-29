@@ -20,16 +20,10 @@ select distinct
         {{heap.identity_field()}}
                 ) over ( {{window_clause}} )) as user_identity,
     last_value(lower(email)) over ( {{window_clause}} ) as email,
-    min(joindate) over ( {{window_clause}} ) as joindate,
-    last_value(lower(phone_number)) IGNORE NULLS over ( {{window_clause}} ) as phone,
-    last_value(emails_webinar_events) IGNORE NULLS over ( {{window_clause}} ) as emails_webinar_events,
-    last_value(emails_new_features) IGNORE NULLS over ( {{window_clause}} ) as emails_new_features,
-    last_value(emails_product_catalog) IGNORE NULLS over ( {{window_clause}} ) as emails_product_catalog,
-    last_value(account) IGNORE NULLS over ( {{window_clause}} ) as company,
-    last_value(integration_signup) IGNORE NULLS over ( {{window_clause}} ) as integration_signup,
-    last_value(website_url) IGNORE NULLS over ( {{window_clause}} ) as website_url,
-    last_value(first_name) IGNORE NULLS over ( {{window_clause}} ) as first_name,
-    last_value(last_name) IGNORE NULLS over ( {{window_clause}} ) as last_name
+    {% for custom_column in var('custom_user_columns') %}
+        last_value({{custom_column}}) IGNORE NULLS over ( {{window_clause}} ) as {{custom_column}},
+    {% endfor %}
+    min(joindate) over ( {{window_clause}} ) as joindate
     
 from {{ source('heap', 'users') }}
 

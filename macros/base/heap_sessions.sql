@@ -43,7 +43,7 @@
 
 with base as (
 
-    select * from {{var('sessions_table')}}
+    select * from {{ source('heap', 'sessions') }}
 
 ),
 

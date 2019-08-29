@@ -12,6 +12,6 @@ select
     *,
     {{heap.time_field('event_time')}}
     
-from {{var('events_table')}}
+from {{ source('heap', 'all_events') }}
 
 {% endmacro %}

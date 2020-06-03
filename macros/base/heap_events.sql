@@ -13,5 +13,6 @@ select
     {{heap.time_field('event_time')}}
     
 from {{ source('heap', 'all_events') }}
+qualify ROW_NUMBER() over (partition by event_id order by time) = 1
 
 {% endmacro %}
